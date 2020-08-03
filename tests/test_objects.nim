@@ -38,6 +38,12 @@ type
     x {.pfloat32, fieldNumber: 1.}: Option[float32]
     y {.pfloat64, fieldNumber: 2.}: Option[float64]
 
+  FixedOption {.protobuf2.} = object
+    a {.fixed, fieldNumber: 1.}: Option[int32]
+    b {.fixed, fieldNumber: 2.}: Option[int64]
+    c {.fixed, fieldNumber: 3.}: Option[uint32]
+    d {.fixed, fieldNumber: 4.}: Option[uint64]
+
 discard Protobuf.supports(Basic)
 discard Protobuf.supports(Wrapped)
 discard Protobuf.supports(Nested)
@@ -248,6 +254,19 @@ suite "Test Object Encoding/Decoding":
 
     var v = FloatOption()
     check Protobuf.decode(Protobuf.encode(v), FloatOption) == v
+
+  test "Option[Fixed] in object":
+    var x = FixedOption(a: some(1'i32))
+    check Protobuf.decode(Protobuf.encode(x), FixedOption) == x
+
+    var y = FixedOption(b: some(1'i64))
+    check Protobuf.decode(Protobuf.encode(y), FixedOption) == y
+
+    var z = FixedOption(c: some(1'u32))
+    check Protobuf.decode(Protobuf.encode(z), FixedOption) == z
+
+    var v = FixedOption(d: some(1'u64))
+    check Protobuf.decode(Protobuf.encode(v), FixedOption) == v
 
   #[
   This test has been commented for being pointless.

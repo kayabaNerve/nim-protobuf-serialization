@@ -38,6 +38,12 @@ template Float64*(value: float64): FloatWrapped64 =
 template Float32*(value: float32): FloatWrapped32 =
   cast[FloatWrapped32](value)
 
+template Float*(value: SomeFloat): auto =
+  when value is float32:
+    Float32(value)
+  else:
+    Float64(value)
+
 template unwrap*(value: FixedWrapped): untyped =
   when value is FixedWrapped64:
     uint64(value)

@@ -173,10 +173,10 @@ proc writeValueInternal[T](stream: OutputStream, value: T) =
               {.fatal: "Encoding pragma specified yet no enoding matched. This should never happen.".}
 
           elif flattenedField is FixedTypes:
-            when sizeof(flattenedField) == 4:
-              stream.writeFieldInternal(fieldNum, Float32(flattenedField), type(value), fieldName)
+            when flattenedField is SomeFloat:
+              stream.writeFieldInternal(fieldNum, Float(flattenedField), type(value), fieldName)
             else:
-              stream.writeFieldInternal(fieldNum, Float64(flattenedField), type(value), fieldName)
+              stream.writeFieldInternal(fieldNum, Fixed(flattenedField), type(value), fieldName)
           else:
             {.fatal: "Attempting to handle an unknown number type. This should never happen.".}
         else:
