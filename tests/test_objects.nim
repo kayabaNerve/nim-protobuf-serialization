@@ -34,7 +34,7 @@ type
   TestObject {.protobuf3.} = object
     x {.fieldNumber: 1.}: TestEnum
 
-  FloatOption {.protobuf3.} = object
+  FloatOption {.protobuf2.} = object
     x {.pfloat32, fieldNumber: 1.}: Option[float32]
     y {.pfloat64, fieldNumber: 2.}: Option[float64]
 
