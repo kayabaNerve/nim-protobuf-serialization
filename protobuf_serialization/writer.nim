@@ -157,7 +157,7 @@ proc writeValueInternal[T](stream: OutputStream, value: T) =
       let flattenedFieldOption = fieldVal.flatMap()
       if flattenedFieldOption.isSome():
         let flattenedField = flattenedFieldOption.get()
-        when flattenedField is ((not (VarIntWrapped or FixedWrapped)) and (VarIntTypes or FixedTypes)):
+        when flattenedField is ((not (VarIntWrapped)) and (VarIntTypes or FixedTypes)):
           when flattenedField is VarIntTypes:
             const
               hasPInt = flatType(value).hasCustomPragmaFixed(fieldName, pint)
@@ -173,8 +173,10 @@ proc writeValueInternal[T](stream: OutputStream, value: T) =
               {.fatal: "Encoding pragma specified yet no enoding matched. This should never happen.".}
 
           elif flattenedField is FixedTypes:
-            stream.writeFieldInternal(fieldNum, flattenedField, type(value), fieldName)
-
+            when sizeof(flattenedField) == 4:
+              stream.writeFieldInternal(fieldNum, Float32(flattenedField), type(value), fieldName)
+            else:
+              stream.writeFieldInternal(fieldNum, Float64(flattenedField), type(value), fieldName)
           else:
             {.fatal: "Attempting to handle an unknown number type. This should never happen.".}
         else:
